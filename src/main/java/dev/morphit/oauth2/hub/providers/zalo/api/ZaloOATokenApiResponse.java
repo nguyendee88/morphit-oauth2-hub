@@ -9,7 +9,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * @author morphit.dee88
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ZaloOAuthAccessTokenResponse implements Serializable {
+public class ZaloOATokenApiResponse implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
