@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * @author morphit.dee88
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ZaloOAErrorResponse {
+public class ZaloOAErrorApiResponse {
 
     @JsonProperty("error_name")
     private String errorName;

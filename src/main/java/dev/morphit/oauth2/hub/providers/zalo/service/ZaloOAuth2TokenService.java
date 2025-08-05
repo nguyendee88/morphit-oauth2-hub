@@ -26,8 +26,8 @@ import dev.morphit.oauth2.hub.domain.OAuth2ConsentRequest;
 import dev.morphit.oauth2.hub.domain.OAuth2RedeemTokenRequest;
 import dev.morphit.oauth2.hub.exception.MorphitOAuth2Exception;
 import dev.morphit.oauth2.hub.providers.MorphitOAuthProvider;
-import dev.morphit.oauth2.hub.providers.zalo.api.ZaloOAErrorResponse;
-import dev.morphit.oauth2.hub.providers.zalo.api.ZaloOAuthAccessTokenResponse;
+import dev.morphit.oauth2.hub.providers.zalo.api.ZaloOAErrorApiResponse;
+import dev.morphit.oauth2.hub.providers.zalo.api.ZaloOATokenApiResponse;
 import dev.morphit.oauth2.hub.providers.zalo.domain.ZaloOAuth2ConsentRequest;
 import dev.morphit.oauth2.hub.providers.zalo.domain.ZaloOAuth2RedeemTokenRequest;
 import dev.morphit.oauth2.hub.service.MorphitOAuth2TokenSupportService;
@@ -114,12 +114,12 @@ public class ZaloOAuth2TokenService extends MorphitOAuth2TokenSupportService {
             }
             if (isZaloErrorResponse(responseBody)) {
                 logger.info("{}", responseBody);
-                ZaloOAErrorResponse errorResponse = objectMapper.readValue(responseBody, ZaloOAErrorResponse.class);
+                ZaloOAErrorApiResponse errorResponse = objectMapper.readValue(responseBody, ZaloOAErrorApiResponse.class);
                 throw new MorphitOAuth2Exception(errorResponse.getErrorName());
             }
 
-            ZaloOAuthAccessTokenResponse apiResponse = objectMapper.readValue(responseBody,
-                    ZaloOAuthAccessTokenResponse.class);
+            ZaloOATokenApiResponse apiResponse = objectMapper.readValue(responseBody,
+                    ZaloOATokenApiResponse.class);
             MorphitOAuth2TokenResponse tokenResponse = new MorphitOAuth2TokenResponse();
             tokenResponse.setClientId(clientId);
             tokenResponse.setProvider(MorphitOAuthProvider.ZaloOAuth.name());
