@@ -6,6 +6,9 @@ package dev.morphit.oauth2.hub.providers;
 public enum MorphitOAuthProvider {
     
     ZaloOAuth,
-    FacebookOAuth
+    FacebookOAuth,
+    
+    GoogleAdsAuth,
+    TiktokAdsAuth
     
 }
