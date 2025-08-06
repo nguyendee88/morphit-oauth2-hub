@@ -1,12 +1,10 @@
 package dev.morphit.oauth2.hub.providers.zalo.service;
 
 import java.net.URI;
-import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -16,10 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import dev.morphit.oauth2.hub.domain.MorphitOAuth2TokenResponse;
 import dev.morphit.oauth2.hub.domain.OAuth2ConsentRequest;
@@ -31,6 +26,7 @@ import dev.morphit.oauth2.hub.providers.zalo.api.ZaloOATokenApiResponse;
 import dev.morphit.oauth2.hub.providers.zalo.domain.ZaloOAuth2ConsentRequest;
 import dev.morphit.oauth2.hub.providers.zalo.domain.ZaloOAuth2RedeemTokenRequest;
 import dev.morphit.oauth2.hub.service.MorphitOAuth2TokenSupportService;
+import dev.morphit.oauth2.hub.session.domain.MorphitOAuthSessionObject;
 import dev.morphit.oauth2.hub.utils.PkceUtil;
 
 /**
@@ -40,34 +36,38 @@ public class ZaloOAuth2TokenService extends MorphitOAuth2TokenSupportService {
 
     private Logger logger = LoggerFactory.getLogger(ZaloOAuth2TokenService.class);
 
-    @Value("${morphit.oauth2.zalo.permission.endpoint:https://oauth.zalo.me/v4/permission}")
+    @Value("${morphit.oauth2.zalo.consent.endpoint:https://oauth.zalo.me/v4/permission}")
     private String permissionEndpoint;
 
-    @Value("${morphit.oauth2.zalo.access_token.endpoint:https://oauth.zalo.me/v4/permission}")
+    @Value("${morphit.oauth2.zalo.access_token.endpoint:https://oauth.zaloapp.com/v4/oa/access_token}")
     private String accessTokenEndpoint;
 
-    @Autowired
-    private ZaloOAuth2CodeVerifierStorage codeVerifierStorage;
-
-    @Autowired
-    private RestTemplate restTemplate;
-
-    private ObjectMapper objectMapper = new ObjectMapper();
+    @Override
+    public MorphitOAuthProvider provider() {
+        return MorphitOAuthProvider.ZaloOAuth;
+    }
 
     @Override
     public String buildConsentEndpoint(OAuth2ConsentRequest request) {
         ZaloOAuth2ConsentRequest zaloRequest = (ZaloOAuth2ConsentRequest) request;
         String clientId = zaloRequest.getClientId();
 
-        UriComponentsBuilder builder = UriComponentsBuilder.fromUri(URI.create(permissionEndpoint));
-        builder.queryParam("app_id", clientId);
-        builder.queryParam("redirect_uri", zaloRequest.getRedirectUri());
-
         String codeVerifier = PkceUtil.generateCodeVerifier();
         String codeChallenge = PkceUtil.generateCodeChallenge(codeVerifier);
 
+        UriComponentsBuilder builder = UriComponentsBuilder.fromUri(URI.create(permissionEndpoint));
+        builder.queryParam("app_id", clientId);
+        builder.queryParam("redirect_uri", zaloRequest.getRedirectUri());
         builder.queryParam("code_challenge", codeChallenge);
-        codeVerifierStorage.put(zaloRequest.getOrgId(), clientId, zaloRequest.getClientSecret(), codeVerifier);
+
+        MorphitOAuthSessionObject sessionObject = new MorphitOAuthSessionObject();
+        sessionObject.setOrgId(request.getOrgId());
+        sessionObject.setUserId(request.getUserId());
+        sessionObject.setClientId(zaloRequest.getClientId());
+        sessionObject.setClientSecret(zaloRequest.getClientSecret());
+        sessionObject.setSessionId(codeVerifier);
+
+        morphitOAuthSessionService.put(zaloRequest.getOrgId(), sessionObject);
         return builder.build().toString();
     }
 
@@ -78,15 +78,15 @@ public class ZaloOAuth2TokenService extends MorphitOAuth2TokenSupportService {
 
         // Retrieve stored PKCE code_verifier and client info (from previous consent
         // step)
-        Map<String, String> codeVerifierObject = codeVerifierStorage.get(request.getOrgId());
-        if (codeVerifierObject == null) {
+        MorphitOAuthSessionObject sessionObject = morphitOAuthSessionService.get(request.getOrgId());
+        if (sessionObject == null) {
             String msg = String.format("Code Verifier not found for orgId: %s", request.getOrgId());
             throw new MorphitOAuth2Exception(msg);
         }
 
-        String clientId = codeVerifierObject.get("clientId");
-        String clientSecret = codeVerifierObject.get("clientSecret");
-        String codeVerifier = codeVerifierObject.get("codeVerifier");
+        String clientId = sessionObject.getClientId();
+        String clientSecret = sessionObject.getClientSecret();
+        String codeVerifier = sessionObject.getSessionId();
         if (StringUtils.isAnyBlank(clientId, clientSecret, codeVerifier)) {
             throw new MorphitOAuth2Exception("Missing PKCE data for orgId: " + orgId);
         }
@@ -114,12 +114,12 @@ public class ZaloOAuth2TokenService extends MorphitOAuth2TokenSupportService {
             }
             if (isZaloErrorResponse(responseBody)) {
                 logger.info("{}", responseBody);
-                ZaloOAErrorApiResponse errorResponse = objectMapper.readValue(responseBody, ZaloOAErrorApiResponse.class);
+                ZaloOAErrorApiResponse errorResponse = objectMapper.readValue(responseBody,
+                        ZaloOAErrorApiResponse.class);
                 throw new MorphitOAuth2Exception(errorResponse.getErrorName());
             }
 
-            ZaloOATokenApiResponse apiResponse = objectMapper.readValue(responseBody,
-                    ZaloOATokenApiResponse.class);
+            ZaloOATokenApiResponse apiResponse = objectMapper.readValue(responseBody, ZaloOATokenApiResponse.class);
             MorphitOAuth2TokenResponse tokenResponse = new MorphitOAuth2TokenResponse();
             tokenResponse.setClientId(clientId);
             tokenResponse.setProvider(MorphitOAuthProvider.ZaloOAuth.name());
@@ -150,7 +150,7 @@ public class ZaloOAuth2TokenService extends MorphitOAuth2TokenSupportService {
 
             throw new MorphitOAuth2Exception(msg);
         } finally {
-            codeVerifierStorage.remove(orgId);
+            morphitOAuthSessionService.remove(orgId);
         }
     }
 
