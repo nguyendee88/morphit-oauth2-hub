@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -24,10 +25,12 @@ import dev.morphit.oauth2.hub.providers.facebook.domain.FacebookOAuth2RedeemToke
 import dev.morphit.oauth2.hub.service.MorphitOAuth2TokenSupportService;
 import dev.morphit.oauth2.hub.session.domain.MorphitOAuthSessionObject;
 import dev.morphit.oauth2.hub.utils.PkceUtil;
+import jakarta.annotation.PostConstruct;
 
 /**
  * @author morphit.dee88
  **/
+@Service("FacebookOAuth2TokenService")
 public class FacebookOAuth2TokenService extends MorphitOAuth2TokenSupportService {
 
     private Logger logger = LoggerFactory.getLogger(FacebookOAuth2TokenService.class);
@@ -43,6 +46,11 @@ public class FacebookOAuth2TokenService extends MorphitOAuth2TokenSupportService
 
     private static final String USER_INFO_API = "https://graph.facebook.com/me";
 
+    @PostConstruct
+    public void init() {
+        serviceHandler.register(provider().name(), this);
+    }
+    
     @Override
     public MorphitOAuthProvider provider() {
         return MorphitOAuthProvider.FacebookOAuth;
