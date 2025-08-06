@@ -11,6 +11,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpClientErrorException;
@@ -28,10 +29,12 @@ import dev.morphit.oauth2.hub.providers.zalo.domain.ZaloOAuth2RedeemTokenRequest
 import dev.morphit.oauth2.hub.service.MorphitOAuth2TokenSupportService;
 import dev.morphit.oauth2.hub.session.domain.MorphitOAuthSessionObject;
 import dev.morphit.oauth2.hub.utils.PkceUtil;
+import jakarta.annotation.PostConstruct;
 
 /**
  * @author morphit.dee88
  **/
+@Service("ZaloOAuth2TokenService")
 public class ZaloOAuth2TokenService extends MorphitOAuth2TokenSupportService {
 
     private Logger logger = LoggerFactory.getLogger(ZaloOAuth2TokenService.class);
@@ -42,6 +45,11 @@ public class ZaloOAuth2TokenService extends MorphitOAuth2TokenSupportService {
     @Value("${morphit.oauth2.zalo.access_token.endpoint:https://oauth.zaloapp.com/v4/oa/access_token}")
     private String accessTokenEndpoint;
 
+    @PostConstruct
+    public void init() {
+        serviceHandler.register(provider().name(), this);
+    }
+    
     @Override
     public MorphitOAuthProvider provider() {
         return MorphitOAuthProvider.ZaloOAuth;

@@ -20,4 +20,7 @@ public abstract class MorphitOAuth2TokenSupportService implements MorphitOAuth2T
     @Autowired
     protected MorphitOAuthSessionService morphitOAuthSessionService;
     
+    @Autowired
+    protected MorphitOAuth2TokenServiceHandler serviceHandler;
+    
 }
