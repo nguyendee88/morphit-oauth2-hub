@@ -8,7 +8,7 @@ public enum MorphitOAuthProvider {
     ZaloOAuth,
     FacebookOAuth,
     
-    GoogleAdsAuth,
-    TiktokAdsAuth
+    GoogleAdsOAuth,
+    TiktokAdsOAuth
     
 }

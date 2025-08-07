@@ -1,0 +1,62 @@
+package dev.morphit.oauth2.hub.providers.googleads.domain;
+
+import dev.morphit.oauth2.hub.domain.OAuth2ConsentRequest;
+
+/**
+* @author morphit.dee88
+**/
+public class GoogleAdsOAuth2ConsentRequest implements OAuth2ConsentRequest {
+    
+    private String orgId;
+    private String userId;
+    
+    private String clientId;
+    private String clientSecret;
+    private String redirectUri;
+    
+    private String projectId;
+    private String consoleId;
+    
+    public String getClientId() {
+        return clientId;
+    }
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
+    }
+    public String getRedirectUri() {
+        return redirectUri;
+    }
+    public void setRedirectUri(String redirectUri) {
+        this.redirectUri = redirectUri;
+    }
+    public String getOrgId() {
+        return orgId;
+    }
+    public void setOrgId(String orgId) {
+        this.orgId = orgId;
+    }
+    public String getUserId() {
+        return userId;
+    }
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+    public String getClientSecret() {
+        return clientSecret;
+    }
+    public void setClientSecret(String clientSecret) {
+        this.clientSecret = clientSecret;
+    }
+    public String getProjectId() {
+        return projectId;
+    }
+    public void setProjectId(String projectId) {
+        this.projectId = projectId;
+    }
+    public String getConsoleId() {
+        return consoleId;
+    }
+    public void setConsoleId(String consoleId) {
+        this.consoleId = consoleId;
+    }
+}
