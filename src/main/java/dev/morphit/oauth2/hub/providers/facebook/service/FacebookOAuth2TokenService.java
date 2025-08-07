@@ -65,7 +65,7 @@ public class FacebookOAuth2TokenService extends MorphitOAuth2TokenSupportService
         builder.queryParam("scope", consentScopes);
         builder.queryParam("client_id", clientId);
         builder.queryParam("redirect_uri", facebookRequest.getRedirectUri());
-        String codeVerifier = PkceUtil.generateCodeVerifier();
+        String sessionId = PkceUtil.generateCodeVerifier();
 
         MorphitOAuthSessionObject sessionObject = new MorphitOAuthSessionObject();
         sessionObject.setOrgId(request.getOrgId());
@@ -73,7 +73,7 @@ public class FacebookOAuth2TokenService extends MorphitOAuth2TokenSupportService
         sessionObject.setClientId(facebookRequest.getClientId());
         sessionObject.setClientSecret(facebookRequest.getClientSecret());
         sessionObject.setRedirectUri(facebookRequest.getRedirectUri());
-        sessionObject.setSessionId(codeVerifier);
+        sessionObject.setSessionId(sessionId);
 
         return builder.build().toString();
     }

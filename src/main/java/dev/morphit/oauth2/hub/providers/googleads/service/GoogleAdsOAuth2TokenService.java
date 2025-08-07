@@ -134,6 +134,7 @@ public class GoogleAdsOAuth2TokenService extends MorphitOAuth2TokenSupportServic
 
             MorphitOAuth2TokenResponse tokenResponse = new MorphitOAuth2TokenResponse();
             tokenResponse.setClientId(clientId);
+            tokenResponse.setProjectId(sessionObject.getProjectId());
             tokenResponse.setProvider(MorphitOAuthProvider.GoogleAdsOAuth.name());
             tokenResponse.setTokenType("refresh_token");
             tokenResponse.setRefreshToken(googleTokenResponse.getRefreshToken());

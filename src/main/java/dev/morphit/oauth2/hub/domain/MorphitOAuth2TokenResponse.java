@@ -8,6 +8,7 @@ import java.util.List;
 public class MorphitOAuth2TokenResponse {
     
     private String clientId;
+    private String projectId;
     
     private String provider; // ZaloOA, Facebook
     private String sourceId; // OaId, FanpageId, ..
@@ -80,6 +81,12 @@ public class MorphitOAuth2TokenResponse {
     }
     public void setClientId(String clientId) {
         this.clientId = clientId;
+    }
+    public String getProjectId() {
+        return projectId;
+    }
+    public void setProjectId(String projectId) {
+        this.projectId = projectId;
     }
 
 }

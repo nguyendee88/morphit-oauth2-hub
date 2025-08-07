@@ -13,9 +13,7 @@ public class GoogleAdsOAuth2ConsentRequest implements OAuth2ConsentRequest {
     private String clientId;
     private String clientSecret;
     private String redirectUri;
-    
     private String projectId;
-    private String consoleId;
     
     public String getClientId() {
         return clientId;
@@ -52,11 +50,5 @@ public class GoogleAdsOAuth2ConsentRequest implements OAuth2ConsentRequest {
     }
     public void setProjectId(String projectId) {
         this.projectId = projectId;
-    }
-    public String getConsoleId() {
-        return consoleId;
-    }
-    public void setConsoleId(String consoleId) {
-        this.consoleId = consoleId;
     }
 }
