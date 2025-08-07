@@ -30,11 +30,10 @@ It supports authorization code flow, token exchange, refresh token, and token st
 
 | Provider   | Status   |
 |------------|----------|
-| Facebook   | 🛠️ Doing |
-| Zalo       | 🛠️ Doing |
-| Google     | 🔜 Planned |
+| Facebook   | ✅ Done  |
+| Zalo       | ✅ Done  |
+| GoogleAds  | ✅ Done |
 | TikTok     | 🔜 Planned |
-| GitHub     | 🔜 Planned |
 
 ---
 
