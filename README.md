@@ -32,9 +32,8 @@ It supports authorization code flow, token exchange, refresh token, and token st
 |------------|----------|
 | Facebook   | ✅ Done  |
 | Zalo       | ✅ Done  |
-| Google     | 🔜 Planned |
+| GoogleAds  | ✅ Done |
 | TikTok     | 🔜 Planned |
-| GitHub     | 🔜 Planned |
 
 ---
 
