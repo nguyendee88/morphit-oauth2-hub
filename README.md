@@ -33,7 +33,7 @@ It supports authorization code flow, token exchange, refresh token, and token st
 | Facebook   | ✅ Done  |
 | Zalo       | ✅ Done  |
 | GoogleAds  | ✅ Done |
-| TikTok     | 🔜 Planned |
+| TikTok     | ✅ Done |
 
 ---
 
