@@ -22,6 +22,7 @@ public class MorphitOAuth2TokenResponse {
 
     private long expiredAt;
     private long createdAt;
+    
     public String getProvider() {
         return provider;
     }
